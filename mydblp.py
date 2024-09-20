@@ -17,16 +17,6 @@ parser.add_argument("--filename", default="data.csv", metavar="*.csv",
     help="filename to save the papers. default: data.csv")
 parser.add_argument("--strictmatch", type=bool, default=False, 
     help="enable conference strict match, e.g., do not match workshop. default: False")
-parser.add_argument("--conf", default=None, 
-    help='''
-    choice one from the following conference. default: None (search all conferences)
-    "ARCH": ["hpca", "micro", "sc", "asplos", "isca", "usenix", "eurosys", "socc", "spaa", "cluster", "icdcs", "sigmetrics", "icpp", "ipps", "performance", "hpdc", "europar"], 
-    "NET": ["infocom", "iwqos"], 
-    "SOFT": ["sosp", "osdi", "icsoc", "icws", "middleware"], 
-    "DM": ["sigmod", "kdd", "icde", "cikm", "wsdm", "dasfaa", "pkdd", "iswc", "icdm", "cidr"], 
-    "AI":["aaai", "nips", "icml", "ijcai", "iclr"]
-    Notes: ipps means IPDPS.
-    ''')
 parser.add_argument("--loglevel", choices=["debug", "info", "silent"], default="info", 
     help="logging level. defaule: silent")
 parser.add_argument("--logfilename", default="dblplog.log")
@@ -72,18 +62,8 @@ keywords = ["train", "schedul", "data", "prefetch", "cache", "resource", "accele
 #       "cluster": 0.1, 
 #       "distributed": 0.1, 
 #       "file": 0.1}
-confs = ["fast", "hpca", "micro", "sc", "asplos", "isca", "usenix", "eurosys","sigcomm",  "mobicom", "infocom", "nsdi","sosp", "osdi","sigmod", "kdd", "icde", "vldb", "aaai", "nips", "icml", "ijcai", "iclr"]
+CONFS = ["fast", "hpca", "micro", "sc", "asplos", "isca", "usenix", "eurosys","sigcomm",  "mobicom", "infocom", "nsdi","sosp", "osdi","sigmod", "kdd", "icde", "vldb", "aaai", "nips", "icml", "ijcai", "iclr"]
 SCORE_EACH_KEYWORD = 0.1
-
-
-venue_set = {
-    "ARCH": ["hpca", "micro", "sc", "asplos", "isca", "usenix", "eurosys", "socc", "spaa", "cluster", "icdcs", "sigmetrics", "icpp", "ipps", "performance", "hpdc", "europar"], 
-    "NET": ["infocom", "iwqos"], 
-    "SOFT": ["sosp", "osdi", "icsoc", "icws", "middleware"], 
-    "DM": ["sigmod", "kdd", "icde", "cikm", "wsdm", "dasfaa", "pkdd", "iswc", "icdm", "cidr"], 
-    "AI":["aaai", "nips", "icml", "ijcai", "iclr"]
-}
-
 YEAR_START = args.syear
 SCORE_THRESHOD = args.sthreshod
 # %%
@@ -217,14 +197,11 @@ def searchConference(conf, keywords):
 
 
 if __name__ == "__main__":
-    if args.conf:
-        conf = args.conf
 
-    
     logger.info(args)
     
     paper_list = []
-    for conf in confs:
+    for conf in CONFS:
         # for keywords in keywords_list:
             paper_list += searchConference(conf, keywords)
             if len(paper_list):
