@@ -7,65 +7,14 @@ import logging
 import argparse
 import os
 
-# %%
-parser = argparse.ArgumentParser(description='dblp paper crawler.')
-parser.add_argument('--syear', type=int, default=2023, metavar="INT", 
-                    help='year to start the crawler. default: 2023')
-parser.add_argument("--sthreshod", type=float, default=0.2, metavar="FLOAT", 
-    help="threshod for the paper score to add to paper list. default: 0.2")
-parser.add_argument("--filename", default="data.csv", metavar="*.csv", 
-    help="filename to save the papers. default: data.csv")
-parser.add_argument("--strictmatch", type=bool, default=False, 
-    help="enable conference strict match, e.g., do not match workshop. default: False")
-parser.add_argument("--loglevel", choices=["debug", "info", "silent"], default="info", 
-    help="logging level. defaule: silent")
-parser.add_argument("--logfilename", default="dblplog.log")
-args = parser.parse_args()
 
-# %%da
-logmap = {
-    "debug": logging.DEBUG,
-    "info": logging.INFO,
-    "silent": logging.CRITICAL
-}
-logger = logging.getLogger("dblp crawler log")
-logger.setLevel(logmap[args.loglevel])
-# logging File handler
-ch = logging.FileHandler(args.logfilename, "w")
-ch.setLevel(logmap[args.loglevel])
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-ch.setFormatter(formatter)
-# logging stream handler
-sh = logging.StreamHandler()
-sh.setLevel(logmap[args.loglevel])
-shf = logging.Formatter("%(message)s")
-
-logger.addHandler(ch)
-logger.addHandler(sh)
-
-# %%
+# parameters
 keywords = ["train", "schedul", "data", "prefetch", "cache", "resource", "acceleration", "accelerating", "gpu", "cluster", "distributed", "file"]  
-
-# keywords = {
-#     "training": 0.1,
-#       "train": 0.1, 
-#       "scheduling": 0.2, 
-#       "scheduler": 0.2,
-#       "schedule": 0.2, 
-#       "data": 0.1, 
-#       "prefetch": 0.2, 
-#       "cache": 0.2, 
-#       "resource": 0.1, 
-#       "acceleration": 0.1, 
-#       "accelerating": 0.1, 
-#       "gpu": 0.1, 
-#       "cluster": 0.1, 
-#       "distributed": 0.1, 
-#       "file": 0.1}
-CONFS = ["fast", "hpca", "micro", "sc", "asplos", "isca", "usenix", "eurosys","sigcomm",  "mobicom", "infocom", "nsdi","sosp", "osdi","sigmod", "kdd", "icde", "vldb", "aaai", "nips", "icml", "ijcai", "iclr"]
-SCORE_EACH_KEYWORD = 0.1
-YEAR_START = args.syear
-SCORE_THRESHOD = args.sthreshod
+CONFS = ["fast",]
+SCORE_EACH_KEYWORD = 1
+YEAR_START = 2023
+SCORE_THRESHOD = 2
+FILE_NAME = "data.csv"
 # %%
 class Paper():
     def __init__(self, title=None, venue=None, year=None, pages=None):
@@ -76,6 +25,7 @@ class Paper():
         self.authors = []
         self.score = None
 
+    # in this func, we treat all keyword weight equal   
     def calScore(self):
         s = 0
         for keyword in keywords:
@@ -91,8 +41,8 @@ class Paper():
         return "{} {}, {} {}".format(self.title, self.pages, self.venue, self.year)
 
 
-def savePaper2csv(paper_list, filename):
-    with open("{}".format(filename), "w") as f:
+def savePaper2csv(paper_list, FILE_NAME):
+    with open("{}".format(FILE_NAME), "w") as f:
         writer = csv.writer(f)
         writer.writerow(["title", "venue", "year", "pages", "authors"])
         for paper in paper_list:
@@ -114,7 +64,7 @@ def getContentStrings(tag):
             tmp += c.string
     return tmp
 
-def searchConference(conf, keywords):
+def searchConference(conf, keywords, logger):
     logger.info(f"\nsearch {conf}")
     dblp_url = "https://dblp.org/search/publ/inc"
     confre = re.compile(".*{}.*".format(conf), re.IGNORECASE)
@@ -198,13 +148,44 @@ def searchConference(conf, keywords):
 
 if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser(description='dblp paper crawler.')
+    parser.add_argument("--FILE_NAME", default="data.csv", metavar="*.csv", 
+        help="FILE_NAME to save the papers. default: data.csv")
+    parser.add_argument("--strictmatch", type=bool, default=False, 
+        help="enable conference strict match, e.g., do not match workshop. default: False")
+    parser.add_argument("--loglevel", choices=["debug", "info", "silent"], default="info", 
+        help="logging level. defaule: silent")
+    parser.add_argument("--logFILE_NAME", default="dblplog.log")
+    args = parser.parse_args()
+
+    # logger
+    logmap = {
+        "debug": logging.DEBUG,
+        "info": logging.INFO,
+        "silent": logging.CRITICAL
+    }
+    logger = logging.getLogger("dblp crawler log")
+    logger.setLevel(logmap[args.loglevel])
+    # logging File handler
+    ch = logging.FileHandler(args.logFILE_NAME, "w")
+    ch.setLevel(logmap[args.loglevel])
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    ch.setFormatter(formatter)
+    # logging stream handler
+    sh = logging.StreamHandler()
+    sh.setLevel(logmap[args.loglevel])
+    shf = logging.Formatter("%(message)s")
+
+    logger.addHandler(ch)
+    logger.addHandler(sh)
+
     logger.info(args)
     
     paper_list = []
     for conf in CONFS:
         # for keywords in keywords_list:
-            paper_list += searchConference(conf, keywords)
+            paper_list += searchConference(conf, keywords, logger)
             if len(paper_list):
-                savePaper2csv(paper_list, args.filename)
-                logger.info("paper list saved to {}".format(args.filename))
+                savePaper2csv(paper_list, FILE_NAME)
+                logger.info("paper list saved to {}".format(FILE_NAME))
 

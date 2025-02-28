@@ -2,26 +2,32 @@
 
 ### Install python environment
 
-Use `poetry install --only main` to install python requirements. 
+Use `pip install -r requirements.txt` to install runtime requirements.
+
+Use `pip install -r requirements-dev.txt` to install development requirements.
 
 ### Features
 
-Crawl papers for specific conferences in dblp with multiple keywords. 
+Crawl papers for specific conferences in dblp with multiple keywords.
 
-- [x] Crawl conference
-- [x] Simple regex to filter workshop or other session
-- [x] Log to a file and stream to console
+- [X] Crawl conference
+- [X] Simple regex to filter workshop or other session
+- [X] Log to a file and stream to console
 
 ### Usage
 
-`poetry shell` to use the created python virtual environment. 
+Activate your virtual environment and run:
 
-`python mydblp.py -h` for the help message. 
+cd backend
 
-`python mydblp.py --conf="sc"` to crawl a specific conference. 
+uvicorn main:app
 
+`python mydblp.py -h` for the help message.
+
+`python mydblp.py --conf="sc"` to crawl a specific conference.
 
 ### Things to be implemented
+
 - [ ] Crawl journal
 - [ ] Multi-processing crawl
 - [ ] Add more regex filters

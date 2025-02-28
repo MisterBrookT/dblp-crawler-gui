@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DBLP Crawler Frontend</title>
+</head>
+<body>
+    <h1>DBLP Crawler</h1>
+    <label for="confs">Conferences (comma-separated):</label>
+    <input type="text" id="confs" placeholder="e.g., fast, sigmod"><br><br>
+    <label for="keywords">Keywords (comma-separated):</label>
+    <input type="text" id="keywords" placeholder="e.g., train, data"><br><br>
+    <button id="crawlBtn">Start Crawl</button>
+    <p id="result"></p>
+    <script>
+        document.getElementById("crawlBtn").addEventListener("click", async () => {
+            const confs = document.getElementById("confs").value.split(',').map(s => s.trim()).filter(s => s);
+            const keywords = document.getElementById("keywords").value.split(',').map(s => s.trim()).filter(s => s);
+            const response = await fetch("http://localhost:8000/crawl", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ confs: confs, keywords: keywords })
+            });
+            const result = await response.json();
+            document.getElementById("result").innerText = result.message;
+        });
+    </script>
+</body>
+</html>
