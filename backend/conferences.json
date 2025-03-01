@@ -1,0 +1,45 @@
+{
+  "categories": [
+    {
+      "name": "Database",
+      "conferences": [
+        {"name": "SIGMOD", "value": "sigmod"},
+        {"name": "VLDB", "value": "vldb"},
+        {"name": "ICDE", "value": "icde"}
+      ]
+    },
+    {
+      "name": "Systems",
+      "conferences": [
+        {"name": "SOSP", "value": "sosp"},
+        {"name": "OSDI", "value": "osdi"},
+        {"name": "FAST", "value": "fast"},
+        {"name": "ATC", "value": "usenix"}
+      ]
+    },
+    {
+      "name": "Machine Learning",
+      "conferences": [
+        {"name": "NeurIPS", "value": "nips"},
+        {"name": "ICML", "value": "icml"},
+        {"name": "ICLR", "value": "iclr"}
+      ]
+    },
+    {
+      "name": "Security",
+      "conferences": [
+        {"name": "CCS", "value": "ccs"},
+        {"name": "S&P", "value": "sp"},
+        {"name": "USENIX Security", "value": "uss"}
+      ]
+    },
+    {
+      "name": "Programming Languages",
+      "conferences": [
+        {"name": "PLDI", "value": "pldi"},
+        {"name": "POPL", "value": "popl"},
+        {"name": "OOPSLA", "value": "oopsla"}
+      ]
+    }
+  ]
+}
